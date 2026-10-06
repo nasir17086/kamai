@@ -33,6 +33,12 @@ or refund after the deadline. Settles in seconds for < $0.01, versus 2–3% and 
 - [ ] GitHub account/repo for the code (needed for submission)
 
 ## RESUME HERE
+2026-10-07: **BOTH SUBMISSIONS DONE.**
+- Colosseum Crypto World's Fair: project 16052 SUBMITTED (colosseum.com/arena/projects/kamai). Post-submit editable: live link, access instructions, anything-else.
+- Superteam Earn Pakistan Track: SUBMITTED ("Edit Submission" available until 13 Oct 11:59 AM PKT).
+- Links: app https://nasir17086.github.io/kamai/ · repo https://github.com/nasir17086/kamai · pitch https://youtu.be/8dwq74mJ3A4 · demo https://youtu.be/bz8M_5BsK7w · Telegram @nasir17086
+- Next: wait for results; optional builder updates on Colosseum, X/LinkedIn posts.
+
 10-06 late: LIVE.
 - Program on DEVNET (slot 508148729). e2e on devnet: `FUNDER=../keys/id.json node scripts/e2e.mjs https://api.devnet.solana.com` = 18/18. Demo escrow 7Z2439dEmcZmhYc2cvgpphotaveeJbBKFq3gEMgGtLkD (test mint).
 - GitHub: https://github.com/nasir17086/kamai (main). Site: https://nasir17086.github.io/kamai/ (gh-pages branch).
