@@ -38,5 +38,8 @@ or refund after the deadline. Settles in seconds for < $0.01, versus 2–3% and 
 - GitHub: https://github.com/nasir17086/kamai (main). Site: https://nasir17086.github.io/kamai/ (gh-pages branch).
 - Redeploy site: kill http.server; `MSYS_NO_PATHCONV=1 NEXT_PUBLIC_BASE_PATH=/kamai npm run build`; touch out/.nojekyll; copy out/. into a FRESH temp dir; git init -b gh-pages; force-push.
 - On-chain IDL upload failed (anchor 1.x missing helper) - optional, web bundles IDL.
-- Remaining (user): register colosseum.com/worldsfair (country Pakistan), record 2 videos (scripts in docs/SUBMISSION.md), submit Colosseum (deadline 10-12) + Superteam (HUMAN_ONLY, 10-13 11:59 AM PKT).
+- Colosseum: user REGISTERED 10-06 (username nasir17086).
+- DEMO VIDEO DONE: video/Kamai-demo.mp4 (1:22, captions; gitignored). Re-record: build with NEXT_PUBLIC_USDC_MINT=<keys/demo.json mint>, serve out/ on :4321, `node scripts/cancel-stale.mjs` then `node scripts/record-demo.mjs`; ffmpeg = Noor-ul-Quran/node_modules/ffmpeg-static/ffmpeg.exe.
+- Fixed real bug 10-06: dashboard crashed (r.pubkey vs Anchor publicKey) - live site redeployed.
+- Remaining (user): pitch video (voice over slides), upload both videos to YouTube (unlisted), record 2 videos (scripts in docs/SUBMISSION.md), submit Colosseum (deadline 10-12) + Superteam (HUMAN_ONLY, 10-13 11:59 AM PKT).
 - Gotchas: Git Bash mangles "/kamai" -> use MSYS_NO_PATHCONV=1. Push works after user's one-time GCM login.
