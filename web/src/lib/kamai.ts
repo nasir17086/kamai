@@ -7,6 +7,7 @@ import type { Kamai } from "@/idl/kamai";
 
 export const CLUSTER = "devnet" as const;
 export const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL ?? clusterApiUrl(CLUSTER);
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 export const PROGRAM_ID = new PublicKey(idl.address);
 // Circle's devnet USDC. Free test USDC: https://faucet.circle.com (pick Solana Devnet).
 export const USDC_MINT = new PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
@@ -54,7 +55,7 @@ export function invoiceUrl(origin: string, inv: Invoice) {
     id: inv.id,
     due: String(inv.dueDays),
   });
-  return `${origin}/pay/?${q.toString()}`;
+  return `${origin}${BASE_PATH}/pay/?${q.toString()}`;
 }
 
 export function parseInvoice(p: URLSearchParams): Invoice | null {
@@ -77,7 +78,7 @@ export const shortKey = (k: string) => `${k.slice(0, 4)}…${k.slice(-4)}`;
 export const explorerAddr = (addr: string) => `https://explorer.solana.com/address/${addr}?cluster=${CLUSTER}`;
 
 /** Public proof-of-payment page for an escrow account. Anyone can open it; no wallet needed. */
-export const verifyUrl = (origin: string, escrow: string) => `${origin}/verify/?e=${escrow}`;
+export const verifyUrl = (origin: string, escrow: string) => `${origin}${BASE_PATH}/verify/?e=${escrow}`;
 
 export const whatsappShare = (text: string) => `https://wa.me/?text=${encodeURIComponent(text)}`;
 

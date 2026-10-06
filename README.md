@@ -2,6 +2,8 @@
 
 **Escrow invoices for Pakistani freelancers, on Solana.**
 
+**Live app (devnet):** https://nasir17086.github.io/kamai/ · **Live proof page:** [a 200 USDC escrow with one milestone paid](https://nasir17086.github.io/kamai/verify/?e=7Z2439dEmcZmhYc2cvgpphotaveeJbBKFq3gEMgGtLkD) · **Program:** [`61ZkAf…s6Zd`](https://explorer.solana.com/address/61ZkAfTG1tNYA2sDwsKDFCG8MBQRaYWfkRqzfXtos6Zd?cluster=devnet)
+
 *Kamai* (کمائی) means "earnings" in Urdu.
 
 Pakistan has one of the world's largest freelance workforces. Getting paid is still the hardest part of the job:

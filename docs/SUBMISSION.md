@@ -9,7 +9,8 @@ Copy-paste text for Colosseum (Crypto World's Fair) and the Superteam Earn Pakis
 - **Category / track:** Payments & FinTech (also: Stablecoins, Consumer)
 - **Country:** Pakistan
 - **Program ID (devnet):** `61ZkAfTG1tNYA2sDwsKDFCG8MBQRaYWfkRqzfXtos6Zd`
-- **Live demo:** `<fill after hosting>`
+- **Live demo:** https://nasir17086.github.io/kamai/
+- **Live on-chain proof example:** https://nasir17086.github.io/kamai/verify/?e=7Z2439dEmcZmhYc2cvgpphotaveeJbBKFq3gEMgGtLkD
 - **GitHub:** https://github.com/nasir17086/kamai
 - **Pitch video:** `<YouTube unlisted link>`
 - **Technical demo video:** `<YouTube unlisted link>`
@@ -56,9 +57,9 @@ Before recording: install Phantom, switch it to Devnet, make two accounts ("Free
 
 ## Checklist before submitting (deadline: Superteam 13 Oct 11:59 AM PKT; Colosseum, check the site)
 
-- [ ] Devnet SOL in the deploy wallet → Claude deploys the program + IDL to devnet
+- [x] Program deployed to devnet (slot 508148729); e2e 18/18 PASS on devnet
 - [x] GitHub repo: https://github.com/nasir17086/kamai
-- [ ] Hosting → Claude publishes `web/out/`
+- [x] Hosted on GitHub Pages (gh-pages branch)
 - [ ] Record both videos and upload them to YouTube as unlisted
 - [ ] Register at colosseum.com, country = Pakistan, and submit the project there
 - [ ] Superteam Earn: submit the Colosseum project link + GitHub on the Pakistan Track listing

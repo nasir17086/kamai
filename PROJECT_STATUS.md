@@ -33,12 +33,10 @@ or refund after the deadline. Settles in seconds for < $0.01, versus 2–3% and 
 - [ ] GitHub account/repo for the code (needed for submission)
 
 ## RESUME HERE
-10-06 late: product feature-complete for submission (commit c460bf0).
-- Program: fund / release(amount) milestones / refund (only remainder). `node web/scripts/e2e.mjs` = 18/18 PASS on localnet.
-- Web: create (QR + WhatsApp), pay (+proof link), dashboard (milestones, Proof link), /verify (on-chain proof, no wallet), Urdu RTL toggle (+ ?lang=ur). Static export -> web/out.
-- Local: `scripts/rebuild-local.sh` (via wsl-env.sh) = build + copy IDL + restart validator + deploy. Build web vs localnet: NEXT_PUBLIC_RPC_URL=http://127.0.0.1:8899.
-- Program ID `61ZkAfTG1tNYA2sDwsKDFCG8MBQRaYWfkRqzfXtos6Zd`; keypairs backed up in Kamai/keys (gitignored).
-- Competitor entries are NOT public (Superteam API returns []; listing agentAccess=HUMAN_ONLY -> user must submit personally).
-- BLOCKED (user): devnet SOL for wallet `CpSr32anawEMPHUALz9mWxrW79A4Xeb86igVjusNfvvG` (faucet captcha), GitHub account, Colosseum registration, videos.
-- After SOL: `anchor deploy --provider.cluster devnet` + `anchor idl init`; build web w/o RPC env; host web/out; fill links in docs/SUBMISSION.md.
-- WSL gotcha: multi-command shells via .sh file; from Git Bash set MSYS_NO_PATHCONV=1. Kill the python http.server before rebuilding (locks web/out).
+10-06 late: LIVE.
+- Program on DEVNET (slot 508148729). e2e on devnet: `FUNDER=../keys/id.json node scripts/e2e.mjs https://api.devnet.solana.com` = 18/18. Demo escrow 7Z2439dEmcZmhYc2cvgpphotaveeJbBKFq3gEMgGtLkD (test mint).
+- GitHub: https://github.com/nasir17086/kamai (main). Site: https://nasir17086.github.io/kamai/ (gh-pages branch).
+- Redeploy site: kill http.server; `MSYS_NO_PATHCONV=1 NEXT_PUBLIC_BASE_PATH=/kamai npm run build`; touch out/.nojekyll; copy out/. into a FRESH temp dir; git init -b gh-pages; force-push.
+- On-chain IDL upload failed (anchor 1.x missing helper) - optional, web bundles IDL.
+- Remaining (user): register colosseum.com/worldsfair (country Pakistan), record 2 videos (scripts in docs/SUBMISSION.md), submit Colosseum (deadline 10-12) + Superteam (HUMAN_ONLY, 10-13 11:59 AM PKT).
+- Gotchas: Git Bash mangles "/kamai" -> use MSYS_NO_PATHCONV=1. Push works after user's one-time GCM login.

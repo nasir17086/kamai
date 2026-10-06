@@ -1,7 +1,7 @@
 // End-to-end test of the Kamai program against a running validator.
 // Usage: node scripts/e2e.mjs [rpcUrl]   (default http://127.0.0.1:8899)
 import anchor from "@coral-xyz/anchor";
-import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID, createMint, getOrCreateAssociatedTokenAccount, mintTo, getAccount, getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { readFileSync } from "node:fs";
 
@@ -18,8 +18,17 @@ async function expectErr(name, p, code) {
   catch (e) { const m = String(e?.message ?? e) + JSON.stringify(e?.logs ?? ""); check(name, m.includes(code), m.includes(code) ? "" : m.slice(0, 300)); }
 }
 
-const payer = Keypair.generate(), client = Keypair.generate(), freelancer = Keypair.generate();
-for (const k of [payer, client, freelancer]) await conn.confirmTransaction(await conn.requestAirdrop(k.publicKey, 2 * LAMPORTS_PER_SOL));
+// With FUNDER=<keypair.json> (needed on devnet, where airdrops are rate-limited) test wallets are funded by transfer.
+const client = Keypair.generate(), freelancer = Keypair.generate();
+let payer = Keypair.generate();
+if (process.env.FUNDER) {
+  payer = Keypair.fromSecretKey(Uint8Array.from(JSON.parse(readFileSync(process.env.FUNDER, "utf8"))));
+  const tx = new Transaction();
+  for (const k of [client, freelancer]) tx.add(SystemProgram.transfer({ fromPubkey: payer.publicKey, toPubkey: k.publicKey, lamports: 0.05 * LAMPORTS_PER_SOL }));
+  await sendAndConfirmTransaction(conn, tx, [payer]);
+} else {
+  for (const k of [payer, client, freelancer]) await conn.confirmTransaction(await conn.requestAirdrop(k.publicKey, 2 * LAMPORTS_PER_SOL));
+}
 const mint = await createMint(conn, payer, payer.publicKey, null, 6);
 const clientAta = await getOrCreateAssociatedTokenAccount(conn, payer, mint, client.publicKey);
 await mintTo(conn, payer, mint, clientAta.address, payer, 1000_000000n);
