@@ -10,7 +10,8 @@ export const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL ?? clusterApiUrl(CLUSTER)
 export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 export const PROGRAM_ID = new PublicKey(idl.address);
 // Circle's devnet USDC. Free test USDC: https://faucet.circle.com (pick Solana Devnet).
-export const USDC_MINT = new PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
+// NEXT_PUBLIC_USDC_MINT overrides it for local demo recordings that use a private test stablecoin.
+export const USDC_MINT = new PublicKey(process.env.NEXT_PUBLIC_USDC_MINT || "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
 export const USDC_DECIMALS = 6;
 
 export const STATUS = ["Funded", "Released", "Refunded"] as const;

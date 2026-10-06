@@ -42,9 +42,11 @@ export default function Dashboard() {
       program.account.escrow.all([{ memcmp: { offset: CLIENT_OFFSET, bytes: me } }]),
       program.account.escrow.all([{ memcmp: { offset: FREELANCER_OFFSET, bytes: me } }]),
     ]);
+    // Anchor returns { publicKey, account }.
+    const toRow = (r: { publicKey: PublicKey; account: unknown }) => ({ pubkey: r.publicKey, account: r.account as Row["account"] });
     const all = [
-      ...asFreelancer.map((r) => ({ role: "freelancer" as const, r: r as unknown as Row })),
-      ...asClient.map((r) => ({ role: "client" as const, r: r as unknown as Row })),
+      ...asFreelancer.map((r) => ({ role: "freelancer" as const, r: toRow(r) })),
+      ...asClient.map((r) => ({ role: "client" as const, r: toRow(r) })),
     ].sort((a, b) => b.r.account.createdAt.toNumber() - a.r.account.createdAt.toNumber());
     setRows(all);
     setLoading(false);
@@ -141,7 +143,8 @@ export default function Dashboard() {
                 {funded && role === "client" && (
                   <div className="flex items-center gap-2">
                     <input
-                      className="input w-24 py-2 text-sm"
+                      className="input py-2 text-sm"
+                      style={{ width: 104 }}
                       type="number"
                       min="0"
                       step="0.01"

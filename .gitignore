@@ -3,3 +3,4 @@ web/.next/
 *.keypair.json
 keys/
 *-keypair.json
+video/
