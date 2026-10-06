@@ -477,7 +477,8 @@ export type Kamai = {
     {
       "name": "release",
       "docs": [
-        "Client approves the work: the vault pays the freelancer."
+        "Client approves work: the vault pays the freelancer `amount`.",
+        "Partial amounts are milestone payments; releasing the remainder completes the invoice."
       ],
       "discriminator": [
         253,
@@ -729,7 +730,12 @@ export type Kamai = {
           "address": "11111111111111111111111111111111"
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -795,6 +801,11 @@ export type Kamai = {
     },
     {
       "code": 6006,
+      "name": "badReleaseAmount",
+      "msg": "Release amount must be more than 0 and at most what is left in escrow"
+    },
+    {
+      "code": 6007,
       "name": "refundNotAllowed",
       "msg": "Refund allowed only by the freelancer, or by the client after the deadline"
     }
@@ -823,6 +834,10 @@ export type Kamai = {
           },
           {
             "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "released",
             "type": "u64"
           },
           {

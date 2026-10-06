@@ -19,6 +19,16 @@ export function getProgram(connection: Connection, wallet: AnchorWallet) {
   return new Program<Kamai>(idl as Kamai, provider);
 }
 
+/** Read-only program for pages that show escrow data without a connected wallet (e.g. /verify). */
+export function getReadProgram(connection: Connection) {
+  const wallet = {
+    publicKey: PublicKey.default,
+    signTransaction: async <T,>(t: T) => t,
+    signAllTransactions: async <T,>(t: T[]) => t,
+  } as AnchorWallet;
+  return getProgram(connection, wallet);
+}
+
 export function escrowPda(client: PublicKey, freelancer: PublicKey, invoiceId: BN) {
   return PublicKey.findProgramAddressSync(
     [Buffer.from("escrow"), client.toBuffer(), freelancer.toBuffer(), invoiceId.toArrayLike(Buffer, "le", 8)],
@@ -63,6 +73,13 @@ export function parseInvoice(p: URLSearchParams): Invoice | null {
 export const newInvoiceId = () => String(Date.now()) + String(Math.floor(Math.random() * 1000)).padStart(3, "0");
 
 export const shortKey = (k: string) => `${k.slice(0, 4)}…${k.slice(-4)}`;
+
+export const explorerAddr = (addr: string) => `https://explorer.solana.com/address/${addr}?cluster=${CLUSTER}`;
+
+/** Public proof-of-payment page for an escrow account. Anyone can open it; no wallet needed. */
+export const verifyUrl = (origin: string, escrow: string) => `${origin}/verify/?e=${escrow}`;
+
+export const whatsappShare = (text: string) => `https://wa.me/?text=${encodeURIComponent(text)}`;
 
 export const explorerTx = (sig: string) => `https://explorer.solana.com/tx/${sig}?cluster=${CLUSTER}`;
 

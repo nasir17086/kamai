@@ -4,13 +4,13 @@ import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { useCallback, useEffect, useState } from "react";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import type { PublicKey } from "@solana/web3.js";
-import type { BN } from "@coral-xyz/anchor";
-import { STATUS, explorerTx, fromUnits, friendlyError, getProgram, shortKey, usdToPkr } from "@/lib/kamai";
+import { BN } from "@coral-xyz/anchor";
+import { STATUS, explorerTx, fromUnits, friendlyError, getProgram, shortKey, toUnits, usdToPkr, verifyUrl } from "@/lib/kamai";
 
 type Row = {
   pubkey: PublicKey;
   account: {
-    client: PublicKey; freelancer: PublicKey; mint: PublicKey; invoiceId: BN; amount: BN;
+    client: PublicKey; freelancer: PublicKey; mint: PublicKey; invoiceId: BN; amount: BN; released: BN;
     deadline: BN; createdAt: BN; status: number; title: string;
   };
 };
@@ -27,6 +27,7 @@ export default function Dashboard() {
   const [busyKey, setBusyKey] = useState("");
   const [msg, setMsg] = useState<{ text: string; sig?: string } | null>(null);
   const [pkr, setPkr] = useState(280);
+  const [part, setPart] = useState<Record<string, string>>({});
 
   useEffect(() => {
     usdToPkr().then(setPkr);
@@ -53,7 +54,7 @@ export default function Dashboard() {
     load();
   }, [load]);
 
-  async function act(kind: "release" | "refund", r: Row) {
+  async function act(kind: "release" | "refund", r: Row, amount?: BN) {
     if (!wallet) return;
     setBusyKey(r.pubkey.toBase58() + kind);
     setMsg(null);
@@ -68,9 +69,10 @@ export default function Dashboard() {
         tokenProgram: TOKEN_PROGRAM_ID,
       };
       const sig = kind === "release"
-        ? await program.methods.release().accountsPartial(accounts).rpc()
+        ? await program.methods.release(amount ?? r.account.amount.sub(r.account.released)).accountsPartial(accounts).rpc()
         : await program.methods.refund().accountsPartial(accounts).rpc();
-      setMsg({ text: kind === "release" ? "Payment released to the freelancer." : "Refunded to the client.", sig });
+      setMsg({ text: kind === "release" ? "Payment released to the freelancer." : "Remaining escrow refunded to the client.", sig });
+      setPart((p) => ({ ...p, [r.pubkey.toBase58()]: "" }));
       await load();
     } catch (e) {
       setMsg({ text: friendlyError(e) });
@@ -82,12 +84,13 @@ export default function Dashboard() {
   if (!wallet) return <div className="card">Connect your wallet to see your invoices and payments.</div>;
 
   const now = Date.now() / 1000;
+  const remaining = (a: Row["account"]) => fromUnits(a.amount.sub(a.released));
   const earnedLocked = rows
     .filter((x) => x.role === "freelancer" && x.r.account.status === 0)
-    .reduce((s, x) => s + fromUnits(x.r.account.amount), 0);
+    .reduce((s, x) => s + remaining(x.r.account), 0);
   const earnedPaid = rows
-    .filter((x) => x.role === "freelancer" && x.r.account.status === 1)
-    .reduce((s, x) => s + fromUnits(x.r.account.amount), 0);
+    .filter((x) => x.role === "freelancer")
+    .reduce((s, x) => s + fromUnits(x.r.account.released), 0);
 
   return (
     <div>
@@ -130,16 +133,41 @@ export default function Dashboard() {
               <div className="flex items-center gap-3">
                 <div className="text-right">
                   <p className="font-bold">{fromUnits(a.amount).toLocaleString()} USDC</p>
+                  {a.released.gtn(0) && a.status !== 1 && (
+                    <p className="text-xs text-muted">{fromUnits(a.released).toLocaleString()} paid · {remaining(a).toLocaleString()} left</p>
+                  )}
                   <StatusPill status={a.status} />
                 </div>
                 {funded && role === "client" && (
-                  <button className="btn" disabled={!!busyKey} onClick={() => act("release", r)}>
-                    {busyKey === k + "release" ? "…" : "Approve & pay"}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <input
+                      className="input w-24 py-2 text-sm"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="Milestone"
+                      title="Release part of the payment for a finished milestone"
+                      value={part[k] ?? ""}
+                      onChange={(e) => setPart((p) => ({ ...p, [k]: e.target.value }))}
+                    />
+                    <button
+                      className="btn btn-ghost"
+                      disabled={!!busyKey || !(Number(part[k]) > 0 && Number(part[k]) < remaining(a))}
+                      onClick={() => act("release", r, toUnits(Number(part[k])))}
+                    >
+                      Release part
+                    </button>
+                    <button className="btn" disabled={!!busyKey} onClick={() => act("release", r)}>
+                      {busyKey === k + "release" ? "…" : a.released.gtn(0) ? "Pay the rest" : "Approve & pay all"}
+                    </button>
+                  </div>
                 )}
                 {funded && role === "client" && pastDeadline && (
                   <button className="btn btn-ghost" disabled={!!busyKey} onClick={() => act("refund", r)}>Reclaim</button>
                 )}
+                <a className="text-xs text-brand underline" href={verifyUrl(window.location.origin, k)} target="_blank" rel="noreferrer">
+                  Proof
+                </a>
                 {funded && role === "freelancer" && (
                   <button className="btn btn-ghost" disabled={!!busyKey} onClick={() => act("refund", r)}>
                     {busyKey === k + "refund" ? "…" : "Cancel & refund"}

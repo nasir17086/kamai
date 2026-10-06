@@ -471,7 +471,8 @@
     {
       "name": "release",
       "docs": [
-        "Client approves the work: the vault pays the freelancer."
+        "Client approves work: the vault pays the freelancer `amount`.",
+        "Partial amounts are milestone payments; releasing the remainder completes the invoice."
       ],
       "discriminator": [
         253,
@@ -723,7 +724,12 @@
           "address": "11111111111111111111111111111111"
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -789,6 +795,11 @@
     },
     {
       "code": 6006,
+      "name": "BadReleaseAmount",
+      "msg": "Release amount must be more than 0 and at most what is left in escrow"
+    },
+    {
+      "code": 6007,
       "name": "RefundNotAllowed",
       "msg": "Refund allowed only by the freelancer, or by the client after the deadline"
     }
@@ -817,6 +828,10 @@
           },
           {
             "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "released",
             "type": "u64"
           },
           {

@@ -25,6 +25,7 @@ pub mod kamai {
         escrow.mint = ctx.accounts.mint.key();
         escrow.invoice_id = invoice_id;
         escrow.amount = amount;
+        escrow.released = 0;
         escrow.deadline = deadline;
         escrow.created_at = Clock::get()?.unix_timestamp;
         escrow.status = Status::Funded as u8;
@@ -49,15 +50,23 @@ pub mod kamai {
         Ok(())
     }
 
-    /// Client approves the work: the vault pays the freelancer.
-    pub fn release(ctx: Context<Settle>) -> Result<()> {
+    /// Client approves work: the vault pays the freelancer `amount`.
+    /// Partial amounts are milestone payments; releasing the remainder completes the invoice.
+    pub fn release(ctx: Context<Settle>, amount: u64) -> Result<()> {
         let escrow = &ctx.accounts.escrow;
         require!(escrow.status == Status::Funded as u8, KamaiError::NotFunded);
         require_keys_eq!(ctx.accounts.signer.key(), escrow.client, KamaiError::Unauthorized);
+        let remaining = escrow.amount - escrow.released;
+        require!(amount > 0 && amount <= remaining, KamaiError::BadReleaseAmount);
         let to = ctx.accounts.freelancer_token.to_account_info();
-        payout_and_close(&ctx.accounts, to)?;
-        ctx.accounts.escrow.status = Status::Released as u8;
-        emit!(EscrowEvent { escrow: ctx.accounts.escrow.key(), status: Status::Released as u8, amount: ctx.accounts.escrow.amount });
+        if amount == remaining {
+            payout_and_close(&ctx.accounts, to, amount)?;
+            ctx.accounts.escrow.status = Status::Released as u8;
+        } else {
+            payout(&ctx.accounts, to, amount)?;
+        }
+        ctx.accounts.escrow.released += amount;
+        emit!(EscrowEvent { escrow: ctx.accounts.escrow.key(), status: ctx.accounts.escrow.status, amount });
         Ok(())
     }
 
@@ -70,20 +79,20 @@ pub mod kamai {
         let now = Clock::get()?.unix_timestamp;
         let allowed = signer == escrow.freelancer || (signer == escrow.client && now > escrow.deadline);
         require!(allowed, KamaiError::RefundNotAllowed);
+        // Only what has not been released yet goes back to the client.
+        let remaining = escrow.amount - escrow.released;
         let to = ctx.accounts.client_token.to_account_info();
-        payout_and_close(&ctx.accounts, to)?;
+        payout_and_close(&ctx.accounts, to, remaining)?;
         ctx.accounts.escrow.status = Status::Refunded as u8;
-        emit!(EscrowEvent { escrow: ctx.accounts.escrow.key(), status: Status::Refunded as u8, amount: ctx.accounts.escrow.amount });
+        emit!(EscrowEvent { escrow: ctx.accounts.escrow.key(), status: Status::Refunded as u8, amount: remaining });
         Ok(())
     }
 }
 
-fn payout_and_close<'info>(a: &Settle<'info>, to: AccountInfo<'info>) -> Result<()> {
+fn payout<'info>(a: &Settle<'info>, to: AccountInfo<'info>, amount: u64) -> Result<()> {
     let escrow = &a.escrow;
     let id = escrow.invoice_id.to_le_bytes();
     let seeds: &[&[u8]] = &[b"escrow", escrow.client.as_ref(), escrow.freelancer.as_ref(), &id, &[escrow.bump]];
-    let signer = &[seeds];
-
     token_interface::transfer_checked(
         CpiContext::new_with_signer(
             a.token_program.key(),
@@ -93,11 +102,19 @@ fn payout_and_close<'info>(a: &Settle<'info>, to: AccountInfo<'info>) -> Result<
                 to,
                 authority: a.escrow.to_account_info(),
             },
-            signer,
+            &[seeds],
         ),
-        escrow.amount,
+        amount,
         a.mint.decimals,
-    )?;
+    )
+}
+
+fn payout_and_close<'info>(a: &Settle<'info>, to: AccountInfo<'info>, amount: u64) -> Result<()> {
+    payout(a, to, amount)?;
+    let escrow = &a.escrow;
+    let id = escrow.invoice_id.to_le_bytes();
+    let seeds: &[&[u8]] = &[b"escrow", escrow.client.as_ref(), escrow.freelancer.as_ref(), &id, &[escrow.bump]];
+    let signer = &[seeds];
 
     // Vault is empty now; close it and return its rent to the client who paid for it.
     token_interface::close_account(CpiContext::new_with_signer(
@@ -202,6 +219,7 @@ pub struct Escrow {
     pub mint: Pubkey,
     pub invoice_id: u64,
     pub amount: u64,
+    pub released: u64,
     pub deadline: i64,
     pub created_at: i64,
     pub status: u8,
@@ -238,6 +256,8 @@ pub enum KamaiError {
     NotFunded,
     #[msg("Only the client can release funds")]
     Unauthorized,
+    #[msg("Release amount must be more than 0 and at most what is left in escrow")]
+    BadReleaseAmount,
     #[msg("Refund allowed only by the freelancer, or by the client after the deadline")]
     RefundNotAllowed,
 }
