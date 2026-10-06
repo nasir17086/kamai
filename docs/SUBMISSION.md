@@ -18,17 +18,17 @@ Copy-paste text for Colosseum (Crypto World's Fair) and the Superteam Earn Pakis
 
 Pakistan has one of the world's largest freelance workforces. Getting paid is still the hardest part of the job. Payoneer and bank wires cost 2–3%+ and take days. Direct clients found on WhatsApp, Facebook and LinkedIn often disappear after delivery or send fake "payment sent" screenshots. Neither side trusts the other enough to pay or work first.
 
-Kamai is a payment link backed by an on-chain escrow. The freelancer creates an invoice (job, USDC amount, delivery days) and shares the link or QR code. The client pays, and the USDC is locked in an escrow account owned by the Kamai Solana program. The freelancer can see the money is real before starting work. When the client approves, the funds reach the freelancer's wallet in under a second for a fraction of a cent. If the freelancer cancels, or the deadline passes, the client gets a full refund. There's no custody, no sign-up and no backend. The invoice is just a URL, and every rule is enforced by an Anchor program.
+Kamai is a payment link backed by an on-chain escrow. The freelancer creates an invoice (job, USDC amount, delivery days) and shares the link or QR code. The client pays, and the USDC is locked in an escrow account owned by the Kamai Solana program. Anyone can open a public proof link that reads the escrow straight from Solana, so a fake "payment sent" screenshot no longer works. The client releases the money all at once or per milestone, and each release reaches the freelancer's wallet in under a second for a fraction of a cent. If the freelancer cancels, or the deadline passes, the client gets back whatever has not been released. The app is fully bilingual (Urdu right-to-left and English) and shares invoices on WhatsApp in one tap. There's no custody, no sign-up and no backend. The invoice is just a URL, and every rule is enforced by an Anchor program.
 
 Why Solana: sub-second finality and fees under $0.001 make escrow viable even for $20 gigs. USDC (and Token-2022 stablecoins, via `token_interface`) gives freelancers dollar earnings without a bank in the middle.
 
 What's built:
-- An Anchor program with `fund`, `release` and `refund` (PDA escrow + vault, closed on settlement).
-- A Next.js app with an invoice creator, QR code, pay page, dashboard and PKR estimates.
-- 13 end-to-end tests that all pass.
+- An Anchor program with `fund`, `release(amount)` (milestones) and `refund` (PDA escrow + vault, closed on settlement).
+- A Next.js app with an invoice creator (QR code + WhatsApp), pay page, milestone dashboard, a public on-chain verify page, an Urdu/English UI and PKR estimates.
+- 18 end-to-end tests that all pass.
 
 Next steps:
-- milestone payments and an optional arbiter;
+- an optional arbiter for disputes;
 - a PKR off-ramp through local exchanges and EMIs (Raast);
 - a WhatsApp invoice bot;
 - an on-chain reputation history that works as a freelancer CV.
@@ -49,9 +49,10 @@ Before recording: install Phantom, switch it to Devnet, make two accounts ("Free
 1. Open the live app and connect the **Freelancer** account. Type "WordPress site, 5 pages", 50 USDC, 7 days, then click **Create payment link**. Show the PKR estimate and the QR code.
 2. Copy the link, switch Phantom to the **Client** account and open the link. Show the "How this protects you" box, click **Pay 50 USDC into escrow**, approve in Phantom, then open the Solana Explorer link.
 3. **Dashboard** (Client): the invoice shows as *In escrow*. Show the escrow account on Explorer holding 50 USDC.
-4. Click **Approve & pay**, then switch to the Freelancer: the USDC balance went up by 50 almost instantly.
-5. Quick second invoice: the Freelancer clicks **Cancel & refund**, and the Client gets the money back.
-6. Show `program-src/lib.rs` for 20 seconds (the release and refund rules), then run `node scripts/e2e.mjs`: 13 passed.
+4. Type 20 in **Milestone** and click **Release part**: the Freelancer gets 20 instantly. Open the **Proof** link to show the verify page, with 20 paid and 30 still locked. Switch to **اردو** for a few seconds.
+5. Click **Pay the rest**: the invoice shows as *Released*.
+6. Quick second invoice: the Freelancer clicks **Cancel & refund**, and the Client gets the money back.
+7. Show `program-src/lib.rs` for 20 seconds (the release and refund rules), then run `node scripts/e2e.mjs`: 18 passed.
 
 ## Checklist before submitting (deadline: Superteam 13 Oct 11:59 AM PKT; Colosseum, check the site)
 

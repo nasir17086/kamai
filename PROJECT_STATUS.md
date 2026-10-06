@@ -33,12 +33,12 @@ or refund after the deadline. Settles in seconds for < $0.01, versus 2–3% and 
 - [ ] GitHub account/repo for the code (needed for submission)
 
 ## RESUME HERE
-10-06 night: Day 1 DONE + most of Day 2.
-- Program builds (Anchor 1.1.2 fixes: `Context<'info,T>`, `CpiContext::new(program_id_pubkey,..)`, helper takes `&Settle`).
-- Program ID `61ZkAfTG1tNYA2sDwsKDFCG8MBQRaYWfkRqzfXtos6Zd`; keypair only in WSL ~/kamai/target/deploy (BACK IT UP before devnet deploy).
-- LOCAL validator: `scripts/localnet.sh` (via wsl-env.sh) starts solana-test-validator + deploys. Windows reaches it at http://127.0.0.1:8899.
-- `node web/scripts/e2e.mjs` = 13/13 PASS (fund, release, auth, double-fund, freelancer cancel, deadline refund, validation).
-- TS client gotchas: pass `tokenProgram: TOKEN_PROGRAM_ID`; release/refund need `accountsPartial({... escrow })` (escrow seed is self-referential). Pages patched; `npm run build` OK.
-- BLOCKED for devnet: deploy wallet `CpSr32anawEMPHUALz9mWxrW79A4Xeb86igVjusNfvvG` has 0 devnet SOL. CLI airdrop 429; faucet.solana.com needs captcha -> USER. Retry `solana airdrop 2` later (limit resets).
-- Next: devnet deploy + `anchor idl init`; run e2e.mjs against devnet; host web (static export -> Vercel/Hostinger); UI polish + PKR; README/pitch/demo.
-- WSL gotcha: run multi-command shells via a .sh file (`$(...)` inline gets eaten); from Git Bash set MSYS_NO_PATHCONV=1.
+10-06 late: product feature-complete for submission (commit c460bf0).
+- Program: fund / release(amount) milestones / refund (only remainder). `node web/scripts/e2e.mjs` = 18/18 PASS on localnet.
+- Web: create (QR + WhatsApp), pay (+proof link), dashboard (milestones, Proof link), /verify (on-chain proof, no wallet), Urdu RTL toggle (+ ?lang=ur). Static export -> web/out.
+- Local: `scripts/rebuild-local.sh` (via wsl-env.sh) = build + copy IDL + restart validator + deploy. Build web vs localnet: NEXT_PUBLIC_RPC_URL=http://127.0.0.1:8899.
+- Program ID `61ZkAfTG1tNYA2sDwsKDFCG8MBQRaYWfkRqzfXtos6Zd`; keypairs backed up in Kamai/keys (gitignored).
+- Competitor entries are NOT public (Superteam API returns []; listing agentAccess=HUMAN_ONLY -> user must submit personally).
+- BLOCKED (user): devnet SOL for wallet `CpSr32anawEMPHUALz9mWxrW79A4Xeb86igVjusNfvvG` (faucet captcha), GitHub account, Colosseum registration, videos.
+- After SOL: `anchor deploy --provider.cluster devnet` + `anchor idl init`; build web w/o RPC env; host web/out; fill links in docs/SUBMISSION.md.
+- WSL gotcha: multi-command shells via .sh file; from Git Bash set MSYS_NO_PATHCONV=1. Kill the python http.server before rebuilding (locks web/out).

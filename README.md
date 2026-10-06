@@ -14,8 +14,11 @@ Kamai fixes this with a payment link backed by an on-chain escrow:
 
 1. The **freelancer** connects a wallet, types what the job is, the amount in USDC and the delivery days, and gets a **payment link + QR code** to send on WhatsApp or email.
 2. The **client** opens the link and pays. The USDC goes into an **escrow account owned by the Kamai program**, not to the freelancer. Both sides can see on-chain that the money is real and locked.
-3. When the work is delivered, the client clicks **Release**. The freelancer gets paid in under a second, for a fraction of a cent in fees.
-4. If the freelancer **cancels**, or the **deadline passes** without a release, the client takes a **full refund**. No admin, and nobody in the middle holding funds.
+3. When the work is delivered, the client clicks **Release**: either all of it, or part of it per **milestone**. The freelancer gets paid in under a second, for a fraction of a cent in fees.
+4. If the freelancer **cancels**, or the **deadline passes**, the client takes back **whatever has not been released**. No admin, and nobody in the middle holding funds.
+5. **Verify, don't trust screenshots.** Every escrow has a public proof link (`/verify/?e=<escrow>`) that reads its state straight from Solana: locked, partly paid, released or refunded. That ends the "fake payment screenshot" scam.
+
+The whole app works in **Urdu (right-to-left) and English**. Invoices can be shared on **WhatsApp** in one tap, which is how Pakistani freelancers actually talk to clients.
 
 No sign-up and no custody. The only middleman is ~200 lines of open-source Rust.
 
@@ -27,17 +30,17 @@ No sign-up and no custody. The only middleman is ~200 lines of open-source Rust.
      |--------------------------->|                                   |
      |                            |  fund(id, amount, deadline, title)|
      |                            |---------------------------------->|  escrow PDA + USDC vault
-     |                            |  release()                        |
+     |                            |  release(amount)  (milestones)    |
      |                            |---------------------------------->|  vault -> freelancer
      |  cancel = refund()         |       or, after deadline: refund()|  vault -> client
      |------------------------------------------------------------------>|
 ```
 
-- **Escrow PDA** seeds: `["escrow", client, freelancer, invoice_id]`. It stores the client, freelancer, mint, amount, deadline, status and title.
+- **Escrow PDA** seeds: `["escrow", client, freelancer, invoice_id]`. It stores the client, freelancer, mint, amount, released so far, deadline, status and title.
 - **Vault**: the escrow PDA's associated token account. It is closed on settlement, and its rent goes back to the client.
 - **Rules enforced on-chain:**
-  - only the client can `release`;
-  - the freelancer can `refund` at any time (cancel);
+  - only the client can `release`, any amount up to what is left (milestones), and releasing the remainder completes the invoice;
+  - the freelancer can `refund` at any time (cancel), which returns only the unreleased remainder;
   - the client can `refund` only after the deadline;
   - an invoice can be funded only once;
   - the amount must be greater than 0, the deadline must be in the future, and the title must be ≤ 64 bytes.
@@ -50,8 +53,8 @@ The invoice itself is just a URL (`/pay/?to=…&amt=…&t=…&id=…&due=…`), 
 | Path | What |
 |---|---|
 | `program-src/lib.rs` | Anchor program (`fund`, `release`, `refund`) |
-| `web/` | Next.js app: create invoice, pay page, dashboard (release / refund / cancel), PKR estimates |
-| `web/scripts/e2e.mjs` | End-to-end test against a live validator (13 checks) |
+| `web/` | Next.js app: create invoice (QR + WhatsApp), pay page, dashboard (milestone release / refund / cancel), public `/verify` proof page, Urdu/English, PKR estimates |
+| `web/scripts/e2e.mjs` | End-to-end test against a live validator (18 checks) |
 | `web/src/idl/` | Generated IDL + TypeScript types |
 | `scripts/` | WSL helpers: workspace setup, local validator + deploy |
 
@@ -65,7 +68,7 @@ anchor build
 solana-test-validator --reset &        # or use devnet
 anchor deploy --provider.cluster localnet
 
-# end-to-end tests (13 checks: fund, release, auth, double-fund, cancel, deadline refund, validation)
+# end-to-end tests (18 checks: fund, release, milestones, auth, double-fund, cancel, deadline refund, validation)
 cd web && npm install
 node scripts/e2e.mjs http://127.0.0.1:8899
 
@@ -91,16 +94,20 @@ PASS  client cannot refund before deadline
 PASS  freelancer cancel refunds client
 PASS  cannot release after refund
 PASS  client reclaims after deadline
+PASS  milestone 1 pays 30, stays in escrow
+PASS  cannot release more than remaining
+PASS  cannot release zero
+PASS  cancel after milestones refunds only the remaining 20
+PASS  final milestone completes invoice
 PASS  zero amount rejected
 PASS  past deadline rejected
 PASS  long title rejected
 
-13 passed, 0 failed
+18 passed, 0 failed
 ```
 
 ## Roadmap
 
-- **Milestones**: split one invoice into staged releases (for example 30% / 70%).
 - **Dispute window** with an optional third-party arbiter both sides agree on.
 - **PKR off-ramp**: partner with local exchanges and licensed EMIs (for example via Raast) so freelancers can cash out to a bank or wallet.
 - **WhatsApp bot**: create and share invoices without opening the app.
