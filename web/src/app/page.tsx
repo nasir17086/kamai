@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { QRCodeSVG } from "qrcode.react";
+import Link from "next/link";
 import { invoiceUrl, newInvoiceId, usdToPkr, whatsappShare } from "@/lib/kamai";
 import { useT } from "@/lib/i18n";
 
@@ -58,6 +59,11 @@ export default function CreateInvoice() {
             </li>
           ))}
         </ul>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <a className="btn" href="https://youtu.be/bz8M_5BsK7w" target="_blank" rel="noreferrer">{t.watchDemo}</a>
+          {/* A real devnet escrow: 200 USDC, first milestone (60) released. */}
+          <Link className="btn btn-ghost" href="/verify/?e=7Z2439dEmcZmhYc2cvgpphotaveeJbBKFq3gEMgGtLkD">{t.seeProof}</Link>
+        </div>
       </section>
 
       <section className="card">

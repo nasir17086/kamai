@@ -14,9 +14,28 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE = "https://nasir17086.github.io/kamai/";
+const DESCRIPTION =
+  "USDC escrow payment links for Pakistani freelancers on Solana: milestones, on-chain proof of payment, Urdu & WhatsApp.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE),
   title: "Kamai — Get paid safely in USDC",
-  description: "Escrow invoices for Pakistani freelancers on Solana. Your client pays into escrow; you get paid in seconds when they approve.",
+  description: DESCRIPTION,
+  openGraph: {
+    title: "Kamai — Get paid in seconds. Never get scammed out of your work.",
+    description: DESCRIPTION,
+    url: SITE,
+    siteName: "Kamai",
+    images: [{ url: SITE + "og.png", width: 1200, height: 630, alt: "Kamai — USDC escrow payment links on Solana" }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kamai — Get paid in seconds. Never get scammed out of your work.",
+    description: DESCRIPTION,
+    images: [SITE + "og.png"],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

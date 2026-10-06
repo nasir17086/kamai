@@ -1,8 +1,44 @@
-# Kamai — get paid safely in USDC
+<p align="center"><img src="web/public/og.png" alt="Kamai: get paid in seconds, never get scammed out of your work" width="820"></p>
 
-**Escrow invoices for Pakistani freelancers, on Solana.**
+<p align="center">
+  <a href="https://nasir17086.github.io/kamai/"><b>🌐 Live app (devnet)</b></a> ·
+  <a href="https://youtu.be/bz8M_5BsK7w"><b>▶ 80-sec demo</b></a> ·
+  <a href="https://youtu.be/8dwq74mJ3A4"><b>🎤 Pitch</b></a> ·
+  <a href="https://nasir17086.github.io/kamai/verify/?e=7Z2439dEmcZmhYc2cvgpphotaveeJbBKFq3gEMgGtLkD"><b>🔒 Live on-chain proof</b></a> ·
+  <a href="https://explorer.solana.com/address/61ZkAfTG1tNYA2sDwsKDFCG8MBQRaYWfkRqzfXtos6Zd?cluster=devnet"><b>⛓ Program</b></a>
+</p>
 
-**Live app (devnet):** https://nasir17086.github.io/kamai/ · **Live proof page:** [a 200 USDC escrow with one milestone paid](https://nasir17086.github.io/kamai/verify/?e=7Z2439dEmcZmhYc2cvgpphotaveeJbBKFq3gEMgGtLkD) · **Program:** [`61ZkAf…s6Zd`](https://explorer.solana.com/address/61ZkAfTG1tNYA2sDwsKDFCG8MBQRaYWfkRqzfXtos6Zd?cluster=devnet)
+<p align="center">
+  <img alt="Solana" src="https://img.shields.io/badge/Solana-devnet-9945FF?logo=solana&logoColor=white">
+  <img alt="Anchor" src="https://img.shields.io/badge/Anchor-1.1-0f7a4f">
+  <img alt="Tests" src="https://img.shields.io/badge/e2e%20tests-18%2F18%20passing-brightgreen">
+  <img alt="Urdu" src="https://img.shields.io/badge/UI-Urdu%20%7C%20English-0f7a4f">
+  <img alt="Track" src="https://img.shields.io/badge/Crypto%20World's%20Fair-Pakistan%20Track-orange">
+</p>
+
+# Kamai: get paid safely in USDC
+
+**Escrow payment links for Pakistani freelancers, on Solana.**
+
+## Why Kamai is different
+
+| | Payoneer / bank wire | Freelance platforms | Plain crypto transfer | **Kamai** |
+|---|---|---|---|---|
+| Fees | 2–3%+ | 10–20% | < $0.01 | **< $0.01** |
+| Arrives in | 2–5 days | days, after a clearance period | seconds | **< 1 second** |
+| Client protected if work isn't delivered | ✗ | ✓ | ✗ | **✓ automatic refund after the deadline** |
+| Freelancer can prove the client really paid | ✗ | partly | ✗ | **✓ public on-chain proof page** |
+| Pay per milestone | ✗ | ✓ | ✗ | **✓ partial releases on-chain** |
+| Urdu interface + WhatsApp sharing | ✗ | ✗ | ✗ | **✓** |
+| Who holds the money | a company | a company | nobody (no protection) | **an open-source Solana program** |
+
+## Screenshots
+
+| Create an invoice (QR + WhatsApp) | Client pays into escrow |
+|---|---|
+| <img src="docs/screens/home.png" width="420"> | <img src="docs/screens/pay.png" width="420"> |
+| **Public on-chain proof: 60 paid, 140 still locked** | **Full Urdu (right-to-left) interface** |
+| <img src="docs/screens/proof.png" width="420"> | <img src="docs/screens/urdu.png" width="420"> |
 
 *Kamai* (کمائی) means "earnings" in Urdu.
 
