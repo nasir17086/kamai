@@ -38,6 +38,9 @@ or refund after the deadline. Settles in seconds for < $0.01, versus 2–3% and 
 - Superteam Earn Pakistan Track: SUBMITTED ("Edit Submission" available until 13 Oct 11:59 AM PKT).
 - Links: app https://nasir17086.github.io/kamai/ · repo https://github.com/nasir17086/kamai · pitch https://youtu.be/8dwq74mJ3A4 · demo https://youtu.be/bz8M_5BsK7w · Telegram @nasir17086
 - Next: wait for results; optional builder updates on Colosseum, X/LinkedIn posts.
+- 2026-10-07 recheck: devnet e2e 18/18 PASS; live site bundle uses program 61Zk…s6Zd + Circle devnet USDC 4zMM…DncDU; verify page, pay link (to/amt/t/id/due params) and dashboard render. Not tested: in-browser wallet signing (no wallet in Chrome). Devnet only - mainnet needs deploy SOL + audit.
+- 2026-10-07 USER hand-tested full flow locally (web/scripts/try-local.mjs [clientUrl] = 2 headed Edge windows w/ demo wallets; serve out/ on :4321 built with demo mint): create 100 USDC invoice -> pay -> release; on-chain freelancer 600->700, client 400->300, escrow 49dc…RSR4 closed. UX gap found: pasting a pay link into Verify box says "not a valid link" - should redirect to pay page (offered, not done).
+- 2026-10-07 global-vision (low-risk, user OK): README "Beyond Pakistan" roadmap section (86f851c, pushed) + Colosseum "anything else" field appended Vision sentence (477/500, saved+verified). Superteam entry, app, videos untouched. Colosseum editor is Svelte: set value via native setter then dispatch InputEvent(input) before clicking Save changes; keyboard typing does not reach tab.
 
 10-06 late: LIVE.
 - Program on DEVNET (slot 508148729). e2e on devnet: `FUNDER=../keys/id.json node scripts/e2e.mjs https://api.devnet.solana.com` = 18/18. Demo escrow 7Z2439dEmcZmhYc2cvgpphotaveeJbBKFq3gEMgGtLkD (test mint).
