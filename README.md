@@ -152,6 +152,10 @@ PASS  long title rejected
 - **Solana Pay QR** so clients can pay straight from a mobile wallet.
 - **Reputation**: on-chain history of completed invoices as a portable freelancer CV.
 
+### Beyond Pakistan
+
+Pakistan is where Kamai starts, not where it stops. The program has no country lock: any freelancer with a Solana wallet can send an invoice to any client in the world. Freelancers in many other countries face the same problem: PayPal is unavailable or limited, and bank or platform transfers are slow and expensive. The plan is a capped mainnet beta in Pakistan first, then expansion to other freelancer markets through local Superteam communities.
+
 ## Team
 
 Built in Pakistan for Colosseum's Crypto World's Fair and the Superteam Pakistan Track.
