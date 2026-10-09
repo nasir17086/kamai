@@ -72,6 +72,11 @@ function Verify() {
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
+    // A Kamai pay link (/pay/?to=…) has no escrow yet; open it instead of rejecting it.
+    try {
+      const url = new URL(input.trim());
+      if (url.pathname.includes("/pay") && url.searchParams.get("to")) return router.push(`/pay/${url.search}`);
+    } catch {}
     const key = parseEscrow(input);
     if (key) router.replace(`/verify/?e=${key.toBase58()}`);
     check(input);
