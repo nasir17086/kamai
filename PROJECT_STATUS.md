@@ -33,6 +33,7 @@ or refund after the deadline. Settles in seconds for < $0.01, versus 2–3% and 
 - [ ] GitHub account/repo for the code (needed for submission)
 
 ## RESUME HERE
+2026-10-09 pre-deadline audit: all pages/assets 200, no app console errors, no overflow at 390px, devnet program + demo escrow live, repo/videos/Colosseum page 200. FIXED + DEPLOYED: Verify box now opens a pasted pay link (9687e30), verified live; escrow verify unchanged.
 2026-10-07: **BOTH SUBMISSIONS DONE.**
 - Colosseum Crypto World's Fair: project 16052 SUBMITTED (colosseum.com/arena/projects/kamai). Post-submit editable: live link, access instructions, anything-else.
 - Superteam Earn Pakistan Track: SUBMITTED ("Edit Submission" available until 13 Oct 11:59 AM PKT).
